@@ -1,6 +1,7 @@
+<<<<<<< HEAD
 # pathos (pathos-cloud-frontend)
 
-Pathos Cloud c:
+Pathos Cloud
 
 ## Install the dependencies
 ```bash
