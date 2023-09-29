@@ -1,6 +1,6 @@
 # pathos (pathos-cloud-frontend)
 
-Pathos Cloud
+Pathos Cloud c:
 
 ## Install the dependencies
 ```bash
