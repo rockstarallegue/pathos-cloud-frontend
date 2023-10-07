@@ -90,10 +90,13 @@
                 Hypermarket
               </q-item-section>
             </q-item>
-            
             <q-separator/>
           </q-list>
+          <q-list>
+            <NavigationMap :drawer_flag="miniState" :steps="steps"></NavigationMap>
+          </q-list>
         </q-scroll-area>
+ 
 
         <!--
           in this case, we use a button (can be anything)
@@ -120,35 +123,21 @@
       <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" class="inset-font"/>
           <q-toolbar-title v-if="$q.platform.is.desktop" class="nasalization inset-font text-grey"><span class="text-dark-blue">Path explorer</span></q-toolbar-title>
-          <q-space></q-space>
-          <!-- div class="nasalization inset-font row" -->
-            <!-- <- -->
-            <!-- <div class="neon-aqua rounded-2">
-              <q-btn dense push :size="$q.platform.is.desktop ? 'md' : 'sm' " class="light-2-glass text-dark-blue q-pa-none q-mr-xs">
-                <div class="bg-grey-12 rounded-1 grey-borders q-pa-xs q-px-sm nasalization inset-font">
-                  <q-icon size="1.2em" name="arrow_back" class="inset-font"></q-icon>
-                </div>
-              </q-btn>
-            </div>
-            <q-btn dense push :size="$q.platform.is.desktop ? 'md' : 'sm' " icon="arrow_back_ios" icon-right="flag" class="light-2-glass text-dark-blue q-mr-xs q-px-sm"/>
-            <q-btn push rounded :size="$q.platform.is.desktop ? 'lg' : 'md' " dense icon="flag_circle" class="text-dark-blue neon-candy-btn q-pa-xs q-mr-xs"/>
-            <q-btn dense push :size="$q.platform.is.desktop ? 'md' : 'sm' " icon="flag" icon-right="arrow_forward_ios" class="light-2-glass text-dark-blue q-mr-xs q-px-sm"/>
-            <q-btn dense push :size="$q.platform.is.desktop ? 'md' : 'sm' " icon="arrow_forward" class="light-2-glass text-dark-blue q-pa-xs q-mr-xs"/>
-          </div>
-          <q-space></q-space-->
-          
+          <q-space></q-space>      
           <!-- <- -->
           <div class="neon-aqua rounded-2 q-mx-xs">
             <q-btn push dense square size="md"
+            @click="mapStep('backward', 'the direction')"
               class="rounded-2 q-pa-none q-px-none q-pb-xs text-blue-grey">
                 <div class="bg-grey-12 rounded-2 grey-borders q-pa-xs q-px-sm nasalization inset-font">
                   <q-icon size="1.5em" name="arrow_back" class="inset-font"></q-icon>
                 </div>
             </q-btn>
           </div>
-          <!-- checkpoint <- -->
+          <!-- checkpoint bck <- -->
           <div class="neon-aqua rounded-2 q-mx-xs">
             <q-btn push dense square size="md"
+              @click="mapStep('backward_checkpoint', 'the direction')"
               class="rounded-2 q-pa-none q-px-none q-pb-xs text-blue-grey">
                 <div class="bg-grey-12 rounded-2 grey-borders q-pa-xs q-px-sm nasalization inset-font">
                   <q-icon size="1.5em" name="arrow_back_ios" class="inset-font"></q-icon>
@@ -157,7 +146,8 @@
             </q-btn>
           </div>
           <!-- checkpoint -->
-          <div class="neon-candy-cake q-pa-none q-mx-xs" style="border-radius: 10em;">
+          <div class="neon-candy-cake q-pa-none q-mx-xs" 
+            @click="mapStep('checkpoint', 'the direction')" style="border-radius: 10em;">
             <q-btn push dense rounded size="md"
               class="rounded-2 q-pa-none q-pb-xs text-blue-grey" style="border-radius: 10em;">
                 <div class="light-2-glass rounded-2 nasalization q-pa-none" style="border-radius: 10em;">
@@ -165,9 +155,10 @@
                 </div>
             </q-btn>
           </div>
-          <!-- checkpoint -> -->
+          <!-- checkpoint fwd -> -->
           <div class="neon-aqua rounded-2 q-mx-xs">
             <q-btn push dense square size="md"
+            @click="mapStep('forward_checkpoint', 'the direction')"
               class="rounded-2 q-pa-none q-px-none q-pb-xs text-blue-grey">
                 <div class="bg-grey-12 rounded-2 grey-borders q-pa-xs q-px-sm nasalization inset-font">
                   <q-icon size="1.5em" name="flag" class="inset-font"></q-icon>
@@ -178,6 +169,7 @@
           <!-- -> -->
           <div class="neon-aqua rounded-2 q-mx-xs">
             <q-btn push dense square size="md"
+              @click="mapStep('forward_checkpoint', 'the direction')"
               class="rounded-2 q-pa-none q-px-none q-pb-xs text-blue-grey">
                 <div class="bg-grey-12 rounded-2 grey-borders q-pa-xs q-px-sm nasalization inset-font">
                   <q-icon size="1.5em" name="arrow_forward" class="inset-font"></q-icon>
@@ -191,7 +183,7 @@
               class="rounded-2 q-pa-none q-px-none q-pb-xs text-blue-grey">
                 <div class="bg-grey-12 rounded-1 grey-borders q-pa-xs q-px-sm nasalization inset-font">
                   <q-icon size="1.2em" name="push_pin" class="inset-font"></q-icon>
-                  <span v-if="$q.platform.is.desktop" class="font-10 q-px-xs">Pinned</span>
+                  <!-- span v-if="$q.platform.is.desktop" class="font-10 q-px-xs">Pinned</span-->
                 </div>
               <q-badge rounded class="nasalization text-dark-blue neon-cake shadow-1 grey-square" floating>{{ pinned_elements.length }}</q-badge>
               <q-menu
@@ -250,19 +242,25 @@
               <q-menu
                 transition-show="scale"
                 transition-hide="scale"
-                class="bg-gral q-pa-sm rounded-2"
-                style="min-width: 45em" 
+                class="bg-gral q-pa-none rounded-2 grey-square"
+                style="max-width: 40em; max-height: 40em;" 
               >
-                <div class="q-pa-xs nasalization inset-font text-blue-grey bg-gral row">
-                    <div class="col-11">Notes</div>
-                    <div class="col-1 text-right">
-                      <q-btn
-                            flat dense style="color: #404258;" size="sm" icon="search" 
-                            class="nasalization full-width inset-font q-pa-none text-blue-grey"
-                        />
+                <div class="q-pa-none full-width nasalization bg-gral text-blue-grey row rounded-2">
+                  <q-bar class="full-width q-px-none bg-gral shadow-1 q-pa-xs rounded-u-1">
+                    <!--q-btn dense flat round icon="lens" size="8.5px" color="red" /-->
+                    <q-btn dense flat round icon="lens" size="8.5px" color="yellow" />
+                    <q-btn dense flat round icon="lens" size="8.5px" color="green" />
+                    <q-space />
+                    <q-btn dense flat icon="developer_board" />
+                    <div class="text-weight-bold">
+                      NOTEPAD
                     </div>
+                    <q-space />
+                    <q-btn dense flat icon="search" />
+                    <q-btn dense flat icon="restore_from_trash" />
+                  </q-bar>
                 </div>
-                <div class="q-pa-none fit neon-aqua grey-square rounded-2">
+                <div class="q-pa-none full child fit bg-gral">
                   <NotePad></NotePad>
                 </div>
               </q-menu>
@@ -306,19 +304,235 @@
 import { defineComponent, ref } from 'vue'
 import CommentBuilder from 'src/components/Builders/CommentBuilder.vue'
 import NotePad from 'src/components/NotePad.vue'
+import NavigationMap from 'src/components/NavigationMap.vue'
 
 export default defineComponent({
-  components: { CommentBuilder, NotePad },
+  components: { CommentBuilder, NotePad, NavigationMap },
   name: 'MainLayout',
   data () {
     return {
+      // the_drawer_flag: drawer_flag,
       pinned_elements: [
         { type: 'Node', title: 'YC', direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173'},
         { type: 'Profile', title: 'Mr. Dreaminator', direction: 'profile/f76576cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173'},
         { type: 'Community', title: 'Cool stuff', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173'},
         { type: 'Path', title: 'Cool stuff', direction: 'paths/f40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173'},
         { type: 'Community', title: 'Cool stuff', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173'}
-      ]
+      ],
+      // steps node
+      steps: [
+        {
+        label: 'PathosCloud',
+        header: 'root',
+        icon: 'adjust',
+        type: 'move',
+        move: 'login',
+        direction: 'moments/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+        time: '07:34 PM',
+        children:
+        [
+            { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+            { header: 'generic', label: 'Shared', type: 'action', icon: 'share', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+        ]
+        },
+        {
+        label: 'Allegue',
+        header: 'root',
+        icon: 'face_5',
+        type: 'checkpoint',
+        direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+        children: [
+            {
+            label: 'My Type',
+            header: 'root',
+            icon: 'adjust',
+            type: 'move',
+            move: 'forward',
+            direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+            children:
+            [
+                { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+                { header: 'generic', label: 'Share', type: 'action', icon: 'share', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+            ]
+            },
+            {
+            label: 'Allegue',
+            header: 'root',
+            icon: 'face_5',
+            type: 'checkpoint',
+            move: 'checkpoint',
+            direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+            children: [
+                {
+                label: 'My Type',
+                header: 'root',
+                icon: 'adjust',
+                type: 'move',
+                move: 'forward_checkpoint',
+                direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+                children:
+                [
+                    { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+                    { header: 'generic', label: 'Share', type: 'action', icon: 'share', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+                ]
+                },
+                {
+                label: 'Old Soul',
+                header: 'root',
+                icon: 'adjust',
+                type: 'move',
+                move: 'backward_checkpoint',
+                direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+                children:
+                [
+                    { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+                    { header: 'generic', abel: 'Commented', type: 'action', icon: 'chat', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+                ]
+                },
+            ]
+            },
+            {
+            label: 'Old Soul',
+            header: 'root',
+            icon: 'adjust',
+            type: 'move',
+            move: 'click',
+            direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+            children:
+            [
+                { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+                { header: 'generic', abel: 'Commented', type: 'action', icon: 'chat', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+            ]
+            },
+        ]
+        },
+        {
+        label: 'Y Combinator',
+        header: 'root',
+        icon: 'route',
+        type: 'move',
+        move: 'backward',
+        direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+        time: '07:34 PM',
+        children:
+        [
+            { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173'},
+            { header: 'generic', label: 'Commented', type: 'action', icon: 'chat', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+        ]
+        },
+        {
+        label: 'Saint Motel',
+        header: 'root',
+        icon: 'diversity_2',
+        type: 'move',
+        move: 'forward',
+        direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+        children:
+        [
+            { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+            { header: 'generic', label: 'Commented', type: 'action', icon: 'chat', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+        ]
+        },
+        {
+        label: 'My Type',
+        header: 'root',
+        icon: 'adjust',
+        type: 'move',
+        move: 'forward',
+        direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+        children:
+        [
+            { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+            { header: 'generic', label: 'Share', type: 'action', icon: 'share', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+        ]
+        },
+        {
+        label: 'Old Soul',
+        header: 'root',
+        icon: 'adjust',
+        type: 'move',
+        move: 'click',
+        direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+        children:
+        [
+            { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+            { header: 'generic', abel: 'Commented', type: 'action', icon: 'chat', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+        ]
+        },
+        {
+        label: 'Allegue',
+        header: 'root',
+        icon: 'face_5',
+        type: 'checkpoint',
+        direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+        children: [
+            {
+            label: 'My Type',
+            header: 'root',
+            icon: 'adjust',
+            type: 'move',
+            move: 'forward',
+            direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+            children:
+            [
+                { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+                { header: 'generic', label: 'Share', type: 'action', icon: 'share', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+            ]
+            },
+            {
+            label: 'Allegue',
+            header: 'root',
+            icon: 'face_5',
+            type: 'checkpoint',
+            move: 'checkpoint',
+            direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+            children: [
+                {
+                label: 'My Type',
+                header: 'root',
+                icon: 'adjust',
+                type: 'move',
+                move: 'forward_checkpoint',
+                direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+                children:
+                [
+                    { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+                    { header: 'generic', label: 'Share', type: 'action', icon: 'share', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+                ]
+                },
+                {
+                label: 'Old Soul',
+                header: 'root',
+                icon: 'adjust',
+                type: 'move',
+                move: 'backward_checkpoint',
+                direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+                children:
+                [
+                    { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+                    { header: 'generic', abel: 'Commented', type: 'action', icon: 'chat', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+                ]
+                },
+            ]
+            },
+            {
+            label: 'Old Soul',
+            header: 'root',
+            icon: 'adjust',
+            type: 'move',
+            move: 'click',
+            direction: 'nodes/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+            children:
+            [
+                { header: 'generic', label: 'Marked as favorite', type: 'action', icon: 'favorite', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' },
+                { header: 'generic', abel: 'Commented', type: 'action', icon: 'chat', direction: 'community/a30986cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173' }
+            ]
+            },
+        ]
+        }
+      ],
+      checkpoint_stack: [],
+      step_stack: [] // We can put checkpoint stacks inside the checkpoint stack
     }
   },
   methods: {
@@ -338,19 +552,37 @@ export default defineComponent({
       if(type == 'Organisation') { return 'reduce_capacity'; }
       if(type == 'Hypermarket') { return 'shopping_basket'; }
       else { return 'adjust'; }
-  }
+    },
+    mapStep(action, direction){
+      var stype = action == 'checkpoint' ? 'checkpoint' : 'move';
+      // if(this.steps[0].type == )
+      var map_step = {
+        label: 'New Step',
+        header: 'root',
+        icon: 'adjust',
+        type: stype,
+        move: action,
+        direction: 'node/c40976cb1e55b93cbb7929d81c2d11de022a60ace7d7a767c6d36a2cf67ca173',
+        time: '07:34 PM'
+      }
+      this.steps.unshift(map_step)
+    }
   },
   setup () {
     const miniState = ref(false)
+    // const drawer_flag = false
 
     return {
       bar2: ref(false),
       drawer: ref(false),
       miniState,
+      // drawer_flag,
 
       drawerClick (e) {
+        // drawer_flag = drawer_flag == false ? true : false;
+        console.log('DRAWER: ', miniState.value)
         // router.push({ path: 'node' })
-        console.log("click: ", e)
+        // console.log("drawer clicked: ", this.drawer)
         // (this.$route.path === "/node") ? location.reload() : this.$router.push("/node")
         // if in "mini" state and user
         // click on drawer, we switch it to "normal" mode
@@ -362,7 +594,8 @@ export default defineComponent({
           // intended for switching drawer to "normal" mode only
           e.stopPropagation()
         }
-      }
+      },
+
     }
   }
 })

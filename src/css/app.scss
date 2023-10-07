@@ -8,10 +8,11 @@ body{
     // background: radial-gradient(circle at 60% 107%, $n-light-blue 0%, $n-mid-blue 50%, $n-heavy-blue 100%)
     // background: radial-gradient(circle at 60% 107%, $n-light-lemon 0%, $n-mid-lemon 50%, $cake-lemon 100%);
     //background: radial-gradient(circle at 60% 107%, $cake-green 0%, $cake-lemon 50%, $n-light-lemon 100%)
-    background: radial-gradient(circle at 60% 107%, $n-light-pink 0%, $n-light-blue 50%, $n-light-lemon 100%)
+    // background: radial-gradient(circle at 60% 107%, $n-light-pink 0%, $n-light-blue 50%, $n-light-lemon 100%)
     // background-color: #1a1b1f;
     // background: radial-gradient(circle at 107% 30%, $surface-1 0%, $surface-2 50%, $surface-3 100%);
     // background: radial-gradient(circle at 107% 30%, $aqua-1 0%, $aqua-2 50%, $aqua-3 100%);
+    background: radial-gradient(circle at 107% 30%, $surface-1 0%, $surface-2 50%, $aqua-3 100%);
     // background: #474E68;
     // background: rgba(245, 245, 245);
     // background: #BDBDBD;
@@ -197,6 +198,14 @@ body{
     -webkit-backdrop-filter: blur(6px);
 }
 
+.dark-2-glass{
+    // background: rgba(245, 245, 245, 0.8);
+    background:  rgba(71, 78, 104, 0.9);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
 .container{
     display: flex;
     flex-direction: column;
@@ -224,7 +233,7 @@ body{
 }
 
 .rounded-3{
-    border-radius: 0.3em;
+    border-radius: 2.5em;
 }
 
 .rounded-10{
@@ -316,6 +325,10 @@ body{
     font-weight: bold;
 }
 
+.font-13{
+    font-size: 1.3em;
+}
+
 .font-12{
     font-size: 1.2em;
 }
@@ -378,6 +391,10 @@ body{
     padding-top: 0.1em;
 }
 
+.flag-padding{
+    padding-top: 0.1em;
+}
+
 .badge-padding{
     padding: 0.1em;
 }
@@ -397,6 +414,15 @@ body{
 
 .grey-square{
     border: 1px solid #d0d0d0;
+}
+
+.grey-square-2{
+    border: 1px solid #d0d0d0;
+    text-shadow: #e0e0e0 1px 1px 0;
+}
+
+.blue-grey-square{
+    border: 2px solid #607d8b;
 }
 
 .tag-grey-sides{
